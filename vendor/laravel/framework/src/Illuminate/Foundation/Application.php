@@ -26,6 +26,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 {
     /**
      * The Laravel framework version.
+     * Laravel 框架的版本號
      *
      * @var string
      */
@@ -33,6 +34,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * The base path for the Laravel installation.
+     * Laravel 安裝的基本路徑
      *
      * @var string
      */
@@ -137,14 +139,20 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     public function __construct($basePath = null)
     {
+        // $basePath 是基本路徑，從 app.php 帶過來的
+        // laravel new ， cd 後 pwd 的值
+
         if ($basePath) {
             $this->setBasePath($basePath);
         }
 
+        // 全域容器， app ， container ， package manifest
         $this->registerBaseBindings();
 
+        // register event, log, routing
         $this->registerBaseServiceProviders();
 
+        // 放進 alias abstract 對應 array
         $this->registerCoreContainerAliases();
     }
 
@@ -160,17 +168,22 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Register the basic bindings into the container.
+     * 註冊基本綁定到些容器
      *
      * @return void
      */
     protected function registerBaseBindings()
     {
+        // 註冊為全域容器
         static::setInstance($this);
 
         $this->instance('app', $this);
 
         $this->instance(Container::class, $this);
 
+        // package auto-discovery
+        // package 在 composer.json 可以啟用這個功能
+        // 透過 /cache/packages.php ，不必手動去增加 provider
         $this->instance(PackageManifest::class, new PackageManifest(
             new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
         ));
@@ -258,14 +271,17 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Set the base path for the application.
+     * 為 application 設定基本路徑
      *
      * @param  string  $basePath
      * @return $this
      */
     public function setBasePath($basePath)
     {
+        // 若基本路徑結尾有 / 則去除
         $this->basePath = rtrim($basePath, '\/');
 
+        // 綁定路徑
         $this->bindPathsInContainer();
 
         return $this;
@@ -273,19 +289,31 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Bind all of the application paths in the container.
+     * 綁定所有在 application 中的路徑，可以對應到整個安裝路徑中的資料夾
      *
      * @return void
      */
     protected function bindPathsInContainer()
     {
+        // instance 來自 extends 的 container，用來註冊實例並可以在容器中被分享
+
+        // app
         $this->instance('path', $this->path());
+        // laravel 安裝路徑
         $this->instance('path.base', $this->basePath());
+        // resources/lang
         $this->instance('path.lang', $this->langPath());
+        // config
         $this->instance('path.config', $this->configPath());
+        // public
         $this->instance('path.public', $this->publicPath());
+        // storage
         $this->instance('path.storage', $this->storagePath());
+        // database
         $this->instance('path.database', $this->databasePath());
+        // resources
         $this->instance('path.resources', $this->resourcePath());
+        // bootstrap
         $this->instance('path.bootstrap', $this->bootstrapPath());
     }
 
@@ -550,6 +578,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Register a service provider with the application.
+     * 註冊 service provider
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @param  bool   $force
@@ -557,6 +586,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     public function register($provider, $force = false)
     {
+        // 拿 service provider
         if (($registered = $this->getProvider($provider)) && ! $force) {
             return $registered;
         }
@@ -564,10 +594,14 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         // If the given "provider" is a string, we will resolve it, passing in the
         // application instance automatically for the developer. This is simply
         // a more convenient way of specifying your service provider classes.
+
+        // 如果傳進來的是字串，就自動將之解析並再傳入 application
+        // 這是一個比指定 service provider 更便利的方式
         if (is_string($provider)) {
             $provider = $this->resolveProvider($provider);
         }
 
+        // prodiver 有 register method 則執行
         if (method_exists($provider, 'register')) {
             $provider->register();
         }
@@ -575,6 +609,10 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         // If there are bindings / singletons set as properties on the provider we
         // will spin through them and register them with the application, which
         // serves as a convenience layer while registering a lot of bindings.
+
+        // 如果 provider 有 bindings 或 singletons 的 properties，我們會輪一輪並註冊進 application
+        // 這會讓我們在大量綁定的時候更方便
+        // singleton 為 shared 的 bindings
         if (property_exists($provider, 'bindings')) {
             foreach ($provider->bindings as $key => $value) {
                 $this->bind($key, $value);
@@ -592,6 +630,9 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         // If the application has already booted, we will call this boot method on
         // the provider class so it has an opportunity to do its boot logic and
         // will be ready for any usage by this developer's application logic.
+
+        // 如果 application 已 booted ，我們會呼叫 provider 的 boot ，使其有機會可以執行 boot
+        // 可以讓開發者的自由發揮使用
         if ($this->booted) {
             $this->bootProvider($provider);
         }
@@ -601,6 +642,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Get the registered service provider instance if it exists.
+     * 取得已註冊的 service provider
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @return \Illuminate\Support\ServiceProvider|null
@@ -612,6 +654,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Get the registered service provider instances if any exist.
+     * 取得已註冊的 service provider
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @return array
@@ -620,6 +663,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     {
         $name = is_string($provider) ? $provider : get_class($provider);
 
+        // array_filter
         return Arr::where($this->serviceProviders, function ($value) use ($name) {
             return $value instanceof $name;
         });
@@ -627,6 +671,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Resolve a service provider instance from the class name.
+     * 從 class name 解析 service provider 實例
      *
      * @param  string  $provider
      * @return \Illuminate\Support\ServiceProvider
@@ -638,6 +683,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Mark the given provider as registered.
+     * 標為已註冊
      *
      * @param  \Illuminate\Support\ServiceProvider  $provider
      * @return void
@@ -783,6 +829,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Boot the given service provider.
+     * 執行 service provider 的 boot
      *
      * @param  \Illuminate\Support\ServiceProvider  $provider
      * @return mixed
@@ -1068,6 +1115,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Register the core class aliases in the container.
+     * 註冊核心 class 的 alias
      *
      * @return void
      */

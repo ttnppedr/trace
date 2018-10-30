@@ -13,6 +13,7 @@
 | 我們要做的第一件事就是建立一個新的 Laravel application 實例，它用來把所有的 Laravel 組件
 | 黏在一起，就如同膠水的存在，這個 IoC 容器會將系統中所有的部份都綁定。
 */
+// dirname(__DIR__) 的值為 laravel 根目錄的絕對路徑
 
 $app = new Illuminate\Foundation\Application(
     dirname(__DIR__)
