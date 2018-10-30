@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 
+// Illuminate\Contracts\Foundation\ApplicationContract =>
+// Illuminate\Contracts\Container\Container =>
+// Psr\Container\ContainerInterface
 class Application extends Container implements ApplicationContract, HttpKernelInterface
 {
     /**
