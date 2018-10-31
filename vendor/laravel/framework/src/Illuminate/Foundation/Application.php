@@ -199,10 +199,21 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     protected function registerBaseServiceProviders()
     {
+        // singleton events Dispatcher
         $this->register(new EventServiceProvider($this));
 
+        // singleton log LogManager
         $this->register(new LogServiceProvider($this));
 
+        /**
+         * singleton route Route
+         * singleton url UrlGenerate
+         * singleton redirect Redirector
+         * bind PSR-7 request
+         * bind PSR-7 response
+         * singleton ResponseFactoryContract
+         * singleton ControllerDispatcherContract
+         */
         $this->register(new RoutingServiceProvider($this));
     }
 
