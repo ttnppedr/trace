@@ -8,6 +8,7 @@ interface Application extends Container
 {
     /**
      * Get the version number of the application.
+     * 取得 application 的版本號
      *
      * @return string
      */
@@ -15,6 +16,7 @@ interface Application extends Container
 
     /**
      * Get the base path of the Laravel installation.
+     * 取得安全 Laravel 的基本路徑
      *
      * @return string
      */
@@ -22,6 +24,7 @@ interface Application extends Container
 
     /**
      * Get or check the current application environment.
+     * 取得或檢查 application 的環境
      *
      * @return string
      */
@@ -29,6 +32,7 @@ interface Application extends Container
 
     /**
      * Determine if the application is running in the console.
+     * 判定 application 是否在 console 中執行
      *
      * @return bool
      */
@@ -36,6 +40,7 @@ interface Application extends Container
 
     /**
      * Determine if the application is running unit tests.
+     * 判定 application 是否在執行 unit tests
      *
      * @return bool
      */
@@ -43,6 +48,7 @@ interface Application extends Container
 
     /**
      * Determine if the application is currently down for maintenance.
+     * 判定 application 是否正在維護模式中
      *
      * @return bool
      */
@@ -50,6 +56,7 @@ interface Application extends Container
 
     /**
      * Register all of the configured providers.
+     * 註冊所有已配置的 providers
      *
      * @return void
      */
@@ -57,6 +64,7 @@ interface Application extends Container
 
     /**
      * Register a service provider with the application.
+     * 在 application 中註冊一個 service provider
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @param  bool   $force
@@ -66,6 +74,7 @@ interface Application extends Container
 
     /**
      * Register a deferred provider and service.
+     * 註冊延遲載入的 provider 及 service
      *
      * @param  string  $provider
      * @param  string|null  $service
@@ -75,6 +84,7 @@ interface Application extends Container
 
     /**
      * Boot the application's service providers.
+     * 啟動 application 的 service providers
      *
      * @return void
      */
@@ -82,6 +92,7 @@ interface Application extends Container
 
     /**
      * Register a new boot listener.
+     * 註冊一個新的啟動監聽器
      *
      * @param  mixed  $callback
      * @return void
@@ -90,6 +101,7 @@ interface Application extends Container
 
     /**
      * Register a new "booted" listener.
+     * 註冊一個新的已啟動的監聽器
      *
      * @param  mixed  $callback
      * @return void
@@ -98,6 +110,7 @@ interface Application extends Container
 
     /**
      * Get the path to the cached services.php file.
+     * 取得快取 services.php 的路徑
      *
      * @return string
      */
@@ -105,6 +118,7 @@ interface Application extends Container
 
     /**
      * Get the path to the cached packages.php file.
+     * 取得快取 packages.php 的路徑
      *
      * @return string
      */
