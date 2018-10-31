@@ -6,6 +6,7 @@ interface Kernel
 {
     /**
      * Bootstrap the application for HTTP requests.
+     * 啟動處理 HTTP request 的 application
      *
      * @return void
      */
@@ -13,6 +14,7 @@ interface Kernel
 
     /**
      * Handle an incoming HTTP request.
+     * 處理傳入的 HTTP request
      *
      * @param  \Symfony\Component\HttpFoundation\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -21,6 +23,7 @@ interface Kernel
 
     /**
      * Perform any final actions for the request lifecycle.
+     * 執行 request lifecycle 的最後一步
      *
      * @param  \Symfony\Component\HttpFoundation\Request  $request
      * @param  \Symfony\Component\HttpFoundation\Response  $response
@@ -30,6 +33,7 @@ interface Kernel
 
     /**
      * Get the Laravel application instance.
+     * 取得 Laravel application 的實例
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */
