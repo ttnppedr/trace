@@ -67,6 +67,7 @@ $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
 
+// 送出 response
 $response->send();
 
 $kernel->terminate($request, $response);

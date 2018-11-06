@@ -44,6 +44,7 @@ class ResponseHeaderBag extends HeaderBag
 
     /**
      * Returns the headers, with original capitalizations.
+     * 加上原本的 headers 並回傳
      *
      * @return array An array of headers
      */
@@ -57,6 +58,7 @@ class ResponseHeaderBag extends HeaderBag
         return $headers;
     }
 
+    // 所有保留的 header ，但不包含 cookies
     public function allPreserveCaseWithoutCookies()
     {
         $headers = $this->allPreserveCase();
@@ -207,6 +209,7 @@ class ResponseHeaderBag extends HeaderBag
 
     /**
      * Returns an array with all cookies.
+     * 回傳一個有所有cookies 的 array
      *
      * @param string $format
      *
@@ -216,14 +219,17 @@ class ResponseHeaderBag extends HeaderBag
      */
     public function getCookies($format = self::COOKIES_FLAT)
     {
+        // 檢查格式
         if (!\in_array($format, array(self::COOKIES_FLAT, self::COOKIES_ARRAY))) {
             throw new \InvalidArgumentException(sprintf('Format "%s" invalid (%s).', $format, implode(', ', array(self::COOKIES_FLAT, self::COOKIES_ARRAY))));
         }
 
+        // 如果是 array 直接回傳
         if (self::COOKIES_ARRAY === $format) {
             return $this->cookies;
         }
 
+        // 將 cookies 變成單一層的 array
         $flattenedCookies = array();
         foreach ($this->cookies as $path) {
             foreach ($path as $cookies) {

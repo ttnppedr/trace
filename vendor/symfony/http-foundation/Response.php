@@ -318,12 +318,14 @@ class Response
 
     /**
      * Sends HTTP headers.
+     * 送 HTTP headers
      *
      * @return $this
      */
     public function sendHeaders()
     {
         // headers have already been sent by the developer
+        // headers 已經被開發者送出
         if (headers_sent()) {
             return $this;
         }
@@ -348,6 +350,7 @@ class Response
 
     /**
      * Sends content for the current web response.
+     * 送出 content 給目前的 web response
      *
      * @return $this
      */
@@ -360,6 +363,7 @@ class Response
 
     /**
      * Sends HTTP headers and content.
+     * 送 HTTP 的 headers 及 content
      *
      * @return $this
      */
@@ -369,6 +373,7 @@ class Response
         $this->sendContent();
 
         if (\function_exists('fastcgi_finish_request')) {
+            // 送出所有的 response data
             fastcgi_finish_request();
         } elseif (!\in_array(\PHP_SAPI, array('cli', 'phpdbg'), true)) {
             static::closeOutputBuffers(0, true);
