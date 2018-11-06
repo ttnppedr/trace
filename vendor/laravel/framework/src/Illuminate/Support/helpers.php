@@ -441,6 +441,7 @@ if (! function_exists('data_fill')) {
 if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
+     * 從 array 或 object 取得內容，使用 dot 符號
      *
      * @param  mixed   $target
      * @param  string|array  $key
@@ -460,18 +461,22 @@ if (! function_exists('data_get')) {
                 if ($target instanceof Collection) {
                     $target = $target->all();
                 } elseif (! is_array($target)) {
+                    // value 為 Support helpers ，取出值，有可能為 Closure
                     return value($default);
                 }
 
                 $result = [];
 
+                // 遞迴取出所有的值
                 foreach ($target as $item) {
                     $result[] = data_get($item, $key);
                 }
 
+                // 合回單一層
                 return in_array('*', $key) ? Arr::collapse($result) : $result;
             }
 
+            // 將 array 或 object 存回 target 中
             if (Arr::accessible($target) && Arr::exists($target, $segment)) {
                 $target = $target[$segment];
             } elseif (is_object($target) && isset($target->{$segment})) {
@@ -1129,6 +1134,7 @@ if (! function_exists('transform')) {
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
+     * 回傳預設的值
      *
      * @param  mixed  $value
      * @return mixed

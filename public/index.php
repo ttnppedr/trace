@@ -61,6 +61,8 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
+// capture 覆寫 request ，並用利用原始參數設定到 clone 的 Request
+// 包括一些 GET POST JSON 參數的處理
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );

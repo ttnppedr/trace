@@ -184,6 +184,7 @@ class Dispatcher implements DispatcherContract
 
     /**
      * Fire an event and call the listeners.
+     * 觸發 event 及呼叫 listener
      *
      * @param  string|object  $event
      * @param  mixed  $payload
@@ -195,6 +196,9 @@ class Dispatcher implements DispatcherContract
         // When the given "event" is actually an object we will assume it is an event
         // object and use the class as the event name and this event itself as the
         // payload to the handler, which makes object based events quite simple.
+        // 當傳入的 event 真的是一個 object 時，我們假設它是一個 event object
+        // 用這個 class 當作是 event 的名稱，這個 event 本身當作是 handler 的 payload
+        // 這使得 object 更容易建立在 events 之上
         [$event, $payload] = $this->parseEventAndPayload(
             $event, $payload
         );
@@ -211,6 +215,9 @@ class Dispatcher implements DispatcherContract
             // If a response is returned from the listener and event halting is enabled
             // we will just return this response, and not call the rest of the event
             // listeners. Otherwise we will add the response on the response list.
+            // 如果 listener 有回傳 response 且有開啟 event 中止
+            // 我們就直接回應這個 response ，不再繼續呼叫剩餘的 event listener
+            // 否則我們將接著增加 response 到 response list 中
             if ($halt && ! is_null($response)) {
                 return $response;
             }
@@ -218,18 +225,23 @@ class Dispatcher implements DispatcherContract
             // If a boolean false is returned from a listener, we will stop propagating
             // the event to any further listeners down in the chain, else we keep on
             // looping through the listeners and firing every one in our sequence.
+            // 如果 listener 回傳 false ，我們將停止 event 從鍊上繼續生出來
+            // 否則我們將持續地繞 listener 的迴圈，接續觸發每個 event
             if ($response === false) {
                 break;
             }
 
+            // response 結果放進 response array
             $responses[] = $response;
         }
 
+        // 有中止的話，回傳 null，沒有中止的話，回傳 response
         return $halt ? null : $responses;
     }
 
     /**
      * Parse the given event and payload and prepare them for dispatching.
+     * 解析傳入的 event 及 payload ，並準備派發
      *
      * @param  mixed  $event
      * @param  mixed  $payload
@@ -246,12 +258,14 @@ class Dispatcher implements DispatcherContract
 
     /**
      * Determine if the payload has a broadcastable event.
+     * 判斷是不是該被廣播
      *
      * @param  array  $payload
      * @return bool
      */
     protected function shouldBroadcast(array $payload)
     {
+        // 有沒有至少一個 payload ，有沒有實作 shouldBroadcast ，有沒有 broadcastWhen
         return isset($payload[0]) &&
                $payload[0] instanceof ShouldBroadcast &&
                $this->broadcastWhen($payload[0]);
@@ -259,18 +273,21 @@ class Dispatcher implements DispatcherContract
 
     /**
      * Check if event should be broadcasted by condition.
+     * 檢查 event 是否在該被廣播的情況
      *
      * @param  mixed  $event
      * @return bool
      */
     protected function broadcastWhen($event)
     {
+        // event 中有沒有 broadcastWhen function 有則執行看結果，沒有則回 true
         return method_exists($event, 'broadcastWhen')
                 ? $event->broadcastWhen() : true;
     }
 
     /**
      * Broadcast the given event class.
+     * 廣播傳入的 event
      *
      * @param  \Illuminate\Contracts\Broadcasting\ShouldBroadcast  $event
      * @return void
@@ -282,6 +299,7 @@ class Dispatcher implements DispatcherContract
 
     /**
      * Get all of the listeners for a given event name.
+     * 取得所有傳入 event 的 listener
      *
      * @param  string  $eventName
      * @return array

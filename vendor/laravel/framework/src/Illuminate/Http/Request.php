@@ -49,6 +49,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Create a new Illuminate HTTP request from server variables.
+     * 從 server variables 創建一個新的 Illuminate HTTP request
      *
      * @return static
      */
@@ -325,6 +326,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the JSON payload for the request.
+     * 拿 request 中 JSON 的部份
      *
      * @param  string  $key
      * @param  mixed   $default
@@ -340,20 +342,25 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
             return $this->json;
         }
 
+        // data_get 是 Support helpers 中所定義
         return data_get($this->json->all(), $key, $default);
     }
 
     /**
      * Get the input source for the request.
+     * 取得原始的 input source
      *
      * @return \Symfony\Component\HttpFoundation\ParameterBag
      */
     protected function getInputSource()
     {
+        // 是否為 JSON
+        // Concerns\InteractsWithContentTypes
         if ($this->isJson()) {
             return $this->json();
         }
 
+        // 如果是 GET 跟 HEAD 拿 query ，其他的就拿 request
         return in_array($this->getRealMethod(), ['GET', 'HEAD']) ? $this->query : $this->request;
     }
 
@@ -397,25 +404,31 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Create an Illuminate request from a Symfony instance.
+     * 從 symfony 實例創建一個 Illuminate request
      *
      * @param  \Symfony\Component\HttpFoundation\Request  $request
      * @return \Illuminate\Http\Request
      */
     public static function createFromBase(SymfonyRequest $request)
     {
+        // 如果已經是自己
         if ($request instanceof static) {
             return $request;
         }
 
+        // raw body data 先拿出來存著
         $content = $request->content;
 
+        // 複製一個新的 request ，並把參數設定進去
         $request = (new static)->duplicate(
             $request->query->all(), $request->request->all(), $request->attributes->all(),
             $request->cookies->all(), $request->files->all(), $request->server->all()
         );
 
+        // raw body data 放回去
         $request->content = $content;
 
+        // Request body parameters ($_POST).
         $request->request = $request->getInputSource();
 
         return $request;
@@ -423,29 +436,35 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * {@inheritdoc}
+     * 覆寫
      */
     public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
     {
+        // 差在有預先處理 file 的部份
         return parent::duplicate($query, $request, $attributes, $cookies, $this->filterFiles($files), $server);
     }
 
     /**
      * Filter the given array of files, removing any empty values.
+     * 處理 files array 移除空值
      *
      * @param  mixed  $files
      * @return mixed
      */
     protected function filterFiles($files)
     {
+        // 沒有 file
         if (! $files) {
             return;
         }
 
         foreach ($files as $key => $file) {
+            // 有東西，遞迴處理到結束
             if (is_array($file)) {
                 $files[$key] = $this->filterFiles($files[$key]);
             }
 
+            // 沒東西，移除
             if (empty($files[$key])) {
                 unset($files[$key]);
             }
@@ -614,6 +633,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Determine if the given offset exists.
+     * 檢查 offset 是否存在
      *
      * @param  string  $offset
      * @return bool

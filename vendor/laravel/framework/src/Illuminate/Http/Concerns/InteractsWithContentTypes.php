@@ -26,11 +26,14 @@ trait InteractsWithContentTypes
 
     /**
      * Determine if the request is sending JSON.
+     * 判定 request 是否為 JSON
      *
      * @return bool
      */
     public function isJson()
     {
+        // mb_strpos
+        // header 的 CONTENT_TYPE 有沒有帶 json
         return Str::contains($this->header('CONTENT_TYPE'), ['/json', '+json']);
     }
 

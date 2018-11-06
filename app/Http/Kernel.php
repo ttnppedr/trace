@@ -64,8 +64,10 @@ class Kernel extends HttpKernel
 
     /**
      * The priority-sorted list of middleware.
+     * middleware 依優先順序排列
      *
      * This forces the listed middleware to always be in the given order.
+     * 這會強制有列出來的 middleware 永遠都是依這個設定的順序
      *
      * @var array
      */

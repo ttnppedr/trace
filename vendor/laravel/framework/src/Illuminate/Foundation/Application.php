@@ -219,17 +219,20 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Run the given array of bootstrap classes.
+     * 執行 bootstrap classes
      *
      * @param  array  $bootstrappers
      * @return void
      */
     public function bootstrapWith(array $bootstrappers)
     {
+        // 設定已啟動
         $this->hasBeenBootstrapped = true;
 
         foreach ($bootstrappers as $bootstrapper) {
             $this['events']->fire('bootstrapping: '.$bootstrapper, [$this]);
 
+            // 各 bootstrapper 中的 bootstrap
             $this->make($bootstrapper)->bootstrap($this);
 
             $this['events']->fire('bootstrapped: '.$bootstrapper, [$this]);
@@ -275,6 +278,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Determine if the application has been bootstrapped before.
+     * 檢查 application 是否曾經被啟動
      *
      * @return bool
      */

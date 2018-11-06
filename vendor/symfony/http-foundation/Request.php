@@ -414,6 +414,7 @@ class Request
 
     /**
      * Clones a request and overrides some of its parameters.
+     * 複製一個 request 並覆寫一些參數
      *
      * @param array $query      The GET parameters
      * @param array $request    The POST parameters
@@ -427,6 +428,7 @@ class Request
     public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
     {
         $dup = clone $this;
+        // ParameterBag 用來放參數
         if (null !== $query) {
             $dup->query = new ParameterBag($query);
         }
@@ -470,9 +472,11 @@ class Request
 
     /**
      * Clones the current request.
+     * 複製目前的 request
      *
      * Note that the session is not cloned as duplicated requests
      * are most of the time sub-requests of the main one.
+     * 注意 session 沒有被複製，因為複製的 request 大部都是主 request 的子 request
      */
     public function __clone()
     {
@@ -637,6 +641,7 @@ class Request
 
     /**
      * Enables support for the _method request parameter to determine the intended HTTP method.
+     * 允許 _method request parameter 來決定真正的 HTTP method
      *
      * Be warned that enabling this feature might lead to CSRF issues in your code.
      * Check that you are using CSRF tokens when required.
@@ -644,7 +649,13 @@ class Request
      * and used to send a "PUT" or "DELETE" request via the _method request parameter.
      * If these methods are not protected against CSRF, this presents a possible vulnerability.
      *
+     * 請小心！開啟這個功能可能會導致你的程式碼會有 CSRF 的問題
+     * 必要時請檢查一下你有沒有使用 CSRF tokens
+     * 如果開啟 HTTP 方法覆寫， html-form 使用 POST 方法可以透過 _method request parameter 被改變成 PUT 或 DELETE 方法
+     * 如果這個方式沒有防範 CSRF 攻擊的話，這會是一個潛在的漏洞
+     *
      * The HTTP method can only be overridden when the real HTTP method is POST.
+     * 只有真實 HTTP method 為 POST 時， HTTP method 才可以被覆寫
      */
     public static function enableHttpMethodParameterOverride()
     {
@@ -653,6 +664,7 @@ class Request
 
     /**
      * Checks whether support for the _method request parameter is enabled.
+     * 檢查有沒有開啟 HTTP method 覆寫功能
      *
      * @return bool True when the _method request parameter is enabled, false otherwise
      */
@@ -1231,6 +1243,7 @@ class Request
 
     /**
      * Gets the "real" request method.
+     * 取得真正的 request ，而非 override 的
      *
      * @return string The request method
      *
@@ -1238,6 +1251,7 @@ class Request
      */
     public function getRealMethod()
     {
+        // 沒有則回 GET
         return strtoupper($this->server->get('REQUEST_METHOD', 'GET'));
     }
 
@@ -1481,6 +1495,7 @@ class Request
 
     /**
      * Returns the request body content.
+     * 回傳 request body content
      *
      * @param bool $asResource If true, a resource will be returned
      *
@@ -1492,6 +1507,7 @@ class Request
     {
         $currentContentIsResource = \is_resource($this->content);
 
+        // rewind: 將檔案的指標設定到檔案的起始位置
         if (true === $asResource) {
             if ($currentContentIsResource) {
                 rewind($this->content);
@@ -1510,6 +1526,7 @@ class Request
 
             $this->content = false;
 
+            // mode b for binary
             return fopen('php://input', 'rb');
         }
 

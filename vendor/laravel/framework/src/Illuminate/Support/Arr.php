@@ -12,6 +12,7 @@ class Arr
 
     /**
      * Determine whether the given value is array accessible.
+     * 檢查是不是一個 array
      *
      * @param  mixed  $value
      * @return bool
@@ -40,6 +41,7 @@ class Arr
 
     /**
      * Collapse an array of arrays into a single array.
+     * 將多維 array 合回一維 array
      *
      * @param  array  $array
      * @return array
@@ -137,6 +139,7 @@ class Arr
 
     /**
      * Determine if the given key exists in the provided array.
+     * 判斷 key 有沒有在 array 中
      *
      * @param  \ArrayAccess|array  $array
      * @param  string|int  $key
@@ -145,6 +148,7 @@ class Arr
     public static function exists($array, $key)
     {
         if ($array instanceof ArrayAccess) {
+            // 在 Illuminate Request offsetExists
             return $array->offsetExists($key);
         }
 
@@ -619,6 +623,7 @@ class Arr
 
     /**
      * If the given value is not an array and not null, wrap it in one.
+     * 如果傳入的 value 不是 array 且也不是 null ，將之包成 array
      *
      * @param  mixed  $value
      * @return array

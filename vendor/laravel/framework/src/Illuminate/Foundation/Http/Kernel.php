@@ -30,6 +30,7 @@ class Kernel implements KernelContract
 
     /**
      * The bootstrap classes for the application.
+     * application 所需要的 bootstrap classes
      *
      * @var array
      */
@@ -81,6 +82,7 @@ class Kernel implements KernelContract
 
     /**
      * Create a new HTTP kernel instance.
+     * 創建一個新的 HTTP kernel 實例
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @param  \Illuminate\Routing\Router  $router
@@ -91,6 +93,7 @@ class Kernel implements KernelContract
         $this->app = $app;
         $this->router = $router;
 
+        // 將 kernel 的優先順序設定給 router
         $router->middlewarePriority = $this->middlewarePriority;
 
         foreach ($this->middlewareGroups as $key => $middleware) {
@@ -104,6 +107,7 @@ class Kernel implements KernelContract
 
     /**
      * Handle an incoming HTTP request.
+     * 處理傳入的 request
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -111,8 +115,10 @@ class Kernel implements KernelContract
     public function handle($request)
     {
         try {
+            // 開啟 HTTP method 覆寫
             $request->enableHttpMethodParameterOverride();
 
+            // 經過 middleware / router 的處理
             $response = $this->sendRequestThroughRouter($request);
         } catch (Exception $e) {
             $this->reportException($e);
@@ -133,18 +139,23 @@ class Kernel implements KernelContract
 
     /**
      * Send the given request through the middleware / router.
+     * 把 request 送到 middleware 及 router
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     protected function sendRequestThroughRouter($request)
     {
+        // 實例化 request
         $this->app->instance('request', $request);
 
+        // 清除 request 已解析的實例
         Facade::clearResolvedInstance('request');
 
+        // bootstrap 所有的 bootstrappers
         $this->bootstrap();
 
+        // pipeline
         return (new Pipeline($this->app))
                     ->send($request)
                     ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
@@ -153,6 +164,7 @@ class Kernel implements KernelContract
 
     /**
      * Bootstrap the application for HTTP requests.
+     * 啟動 application 給 HTTP request
      *
      * @return void
      */
@@ -295,6 +307,7 @@ class Kernel implements KernelContract
 
     /**
      * Get the bootstrap classes for the application.
+     * 取得 application 需要的 bootstrap classes
      *
      * @return array
      */
