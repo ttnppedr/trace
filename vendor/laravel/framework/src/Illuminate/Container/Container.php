@@ -162,6 +162,8 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function bound($abstract)
     {
+        // 代表如果在 bindings, instances, aliases 這三個 array 其一存在
+        // 就會被認定為是已被綁定
         return isset($this->bindings[$abstract]) ||
                isset($this->instances[$abstract]) ||
                $this->isAlias($abstract);
@@ -410,7 +412,11 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function instance($abstract, $instance)
     {
+        // $abstract 為字串名稱，如 path
+        // $instance 為實際路徑，如 /Users/ttnppedr/code/trace/app
+
         // 移除抽象 alias
+        // Application 中的 bindPathsInContainer ，不會有作用
         $this->removeAbstractAlias($abstract);
 
         // 檢查是否已被綁定
@@ -424,6 +430,10 @@ class Container implements ArrayAccess, ContainerContract
 
         // 我們會檢查這個實例是否曾經被綁定過，如果是，將會觸發重新綁定的 callbacks ，在容器中，
         // 因此已解析的消耗性 classes 得以被更新
+
+        // 放進 instances array 中
+        // 型式 [$abstract => $instance]
+        // 型式 ['path' => '/Users/ttnppedr/code/trace/app']
         $this->instances[$abstract] = $instance;
 
         // 若已被綁定則重新綁定
@@ -445,6 +455,8 @@ class Container implements ArrayAccess, ContainerContract
     protected function removeAbstractAlias($searched)
     {
         // 如果不存在 aliases 中則不做事
+        // Application 中的 bindPathsInContainer 全都會進這個條件
+        // 代表那時全都還沒有存進 aliases
         if (! isset($this->aliases[$searched])) {
             return;
         }

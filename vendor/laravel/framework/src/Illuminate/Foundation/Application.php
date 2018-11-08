@@ -136,6 +136,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Create a new Illuminate application instance.
+     * 創建一個新的 Illuminate application 實例
      *
      * @param  string|null  $basePath
      * @return void
@@ -333,6 +334,19 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         $this->instance('path.resources', $this->resourcePath());
         // bootstrap
         $this->instance('path.bootstrap', $this->bootstrapPath());
+
+        // 到此 $instances 中的內容為
+        // [
+        //  'path' => '/Users/ttnppedr/code/trace/app',
+        //  'path.base' => '/Users/ttnppedr/code/trace',
+        //  'path.lang' => '/Users/ttnppedr/code/trace/resource/lang',
+        //  'path.config' => '/Users/ttnppedr/code/trace/config',
+        //  'path.public' => '/Users/ttnppedr/code/trace/public',
+        //  'path.storage' => '/Users/ttnppedr/code/trace/storage',
+        //  'path.database' => '/Users/ttnppedr/code/trace/database',
+        //  'path.resource' => '/Users/ttnppedr/code/trace/resource',
+        //  'path.bootstrap' => '/Users/ttnppedr/code/trace/bootstrap',
+        // ]
     }
 
     /**
