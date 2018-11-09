@@ -179,6 +179,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     protected function registerBaseBindings()
     {
         // 註冊為全域容器
+        // 把 container 的 instance 設為 application
         static::setInstance($this);
 
         $this->instance('app', $this);
@@ -191,6 +192,21 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         $this->instance(PackageManifest::class, new PackageManifest(
             new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
         ));
+        // 到此 $instances 中的內容為
+        // [
+        //  'path' => '/Users/ttnppedr/code/trace/app',
+        //  'path.base' => '/Users/ttnppedr/code/trace',
+        //  'path.lang' => '/Users/ttnppedr/code/trace/resource/lang',
+        //  'path.config' => '/Users/ttnppedr/code/trace/config',
+        //  'path.public' => '/Users/ttnppedr/code/trace/public',
+        //  'path.storage' => '/Users/ttnppedr/code/trace/storage',
+        //  'path.database' => '/Users/ttnppedr/code/trace/database',
+        //  'path.resource' => '/Users/ttnppedr/code/trace/resource',
+        //  'path.bootstrap' => '/Users/ttnppedr/code/trace/bootstrap',
+        //  'app' => Application,
+        //  'Illuminate\Container\Container' => Application,
+        //  'Illuminate\Foundation\PackageManifest' => PackageManifest,
+        // ]
     }
 
     /**
