@@ -211,6 +211,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
     /**
      * Register all of the base service providers.
+     * 註冊所有基本的 service providers
      *
      * @return void
      */
@@ -232,6 +233,19 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
          * singleton ControllerDispatcherContract
          */
         $this->register(new RoutingServiceProvider($this));
+        // 在 markAsRegistered 時會被加進這兩個參數，也代表已被 register
+        // 到此 $serviceProviders 中的內容為
+        // [
+        //   EventServiceProvider,
+        //   LogServiceProvider,
+        //   RoutingServiceProvider
+        // ]
+        // 到此 $loadedProviders 中的內容為
+        // [
+        //   "Illuminate\Events\EventServiceProvider" => true,
+        //   "Illuminate\Log\LogServiceProvider" => true,
+        //   "Illuminate\Routing\RoutingServiceProvider" => true
+        // ]
     }
 
     /**
@@ -635,6 +649,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     public function register($provider, $force = false)
     {
         // 拿 service provider
+        // 有拿到 service provider 且為非強制才會在此回傳，強制代表的意涵待了解
         if (($registered = $this->getProvider($provider)) && ! $force) {
             return $registered;
         }
@@ -648,6 +663,11 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         if (is_string($provider)) {
             $provider = $this->resolveProvider($provider);
         }
+
+        // 以下代表自訂的 service provider 可以有一些東西可以在此 register 的階段被執行
+        // function register
+        // property bindings
+        // property singletons
 
         // prodiver 有 register method 則執行
         if (method_exists($provider, 'register')) {
@@ -681,6 +701,8 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
 
         // 如果 application 已 booted ，我們會呼叫 provider 的 boot ，使其有機會可以執行 boot
         // 可以讓開發者的自由發揮使用
+
+        // service provider 如果有 boot 的話，在這邊會被執行
         if ($this->booted) {
             $this->bootProvider($provider);
         }
@@ -697,6 +719,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     public function getProvider($provider)
     {
+        // 有的話拿第一個，沒有的話則回傳 null
         return array_values($this->getProviders($provider))[0] ?? null;
     }
 
@@ -709,9 +732,11 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     public function getProviders($provider)
     {
+        // 轉為 string
         $name = is_string($provider) ? $provider : get_class($provider);
 
         // array_filter
+        // 取所有相關的 serviceProviders
         return Arr::where($this->serviceProviders, function ($value) use ($name) {
             return $value instanceof $name;
         });
@@ -738,6 +763,9 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      */
     protected function markAsRegistered($provider)
     {
+        // 代表有沒有 register 可以在兩個 array 中看出差異
+        // serviceProviders : [serveriProvider]
+        // loadedProveders : ["servireProvider" => true]
         $this->serviceProviders[] = $provider;
 
         $this->loadedProviders[get_class($provider)] = true;

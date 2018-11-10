@@ -611,6 +611,7 @@ class Arr
 
     /**
      * Filter the array using the given callback.
+     * 用 callback 過濾 array
      *
      * @param  array  $array
      * @param  callable  $callback
@@ -618,6 +619,7 @@ class Arr
      */
     public static function where($array, callable $callback)
     {
+        // ARRAY_FILTER_USE_BOTH 代表 value key 都會被傳入 callback
         return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
     }
 
