@@ -146,6 +146,9 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         // $basePath 是基本路徑，從 app.php 帶過來的
         // laravel new ， cd 後 pwd 的值
 
+        // $abstract 為訂出來的名稱，如：app, auth … 等
+        // $alias 為 class 名稱，如：Illuminate\Foundation\Application, Illuminate\Auth\AuthManager … 等
+
         if ($basePath) {
             $this->setBasePath($basePath);
         }

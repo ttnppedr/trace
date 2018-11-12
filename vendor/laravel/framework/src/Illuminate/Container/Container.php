@@ -523,6 +523,25 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function alias($abstract, $alias)
     {
+        // 這代表會把 abstract 跟 alias 的對應關係，用 aliases 及 abstractAliases 記住
+        // aliases 為一筆一筆的記，範例型式如下：
+        // $aliases = [
+        //   'Illuminate\Foundation\Application' => 'app',
+        //   'Illuminate\Contracts\Container\Container' => 'app',
+        //   'Illuminate\Auth\AuthManager' => 'auth'
+        //   ...
+        //   ]
+        // abstractAliases 會分組的記，範例型式如下：
+        // $abstractAliases = [
+        //   'app' => [
+        //     'Illimunate\Foundation\Application',
+        //     'Illuminate\Contracts\Container\Container'
+        //   ],
+        //   'auth' => [
+        //     'Illuminate\Auth\AuthManager',
+        //   ]
+        //   ...
+        // ]
         $this->aliases[$alias] = $abstract;
 
         $this->abstractAliases[$abstract][] = $alias;
