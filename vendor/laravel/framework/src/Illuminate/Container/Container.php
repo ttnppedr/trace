@@ -179,16 +179,21 @@ class Container implements ArrayAccess, ContainerContract
 
     /**
      * Determine if the given abstract type has been resolved.
+     * 判斷 abstract 是否已被解析
      *
      * @param  string  $abstract
      * @return bool
      */
     public function resolved($abstract)
     {
+        // 如果已在 aliases 中的話，拿出真正的 alias
         if ($this->isAlias($abstract)) {
             $abstract = $this->getAlias($abstract);
         }
 
+        // 如果在 resolved 或 instances 中存在其一的話，代表已被解析
+        // resolved 在 resolve() 中會被放進去
+        // instances 在 instance() 中會被放進去
         return isset($this->resolved[$abstract]) ||
                isset($this->instances[$abstract]);
     }
@@ -234,10 +239,12 @@ class Container implements ArrayAccess, ContainerContract
         // abstract type. After that, the concrete type to be registered as shared
         // without being forced to state their classes in both of the parameters.
 
-        // 如果 type 不是 concrete ， 我們直接將 abstract 設為 concrete
-        // 之後它會被註冊為 shared ， 不會在參數之中強制設定狀態
+        // 如果 type 不是 concrete ， 我們直接將 concrete 設為與 abstract 相同
+        // 之後 concrete 會被註冊為 shared ， 不會在參數之中強制設定狀態
+        // 拿掉 instances 及 aliases
         $this->dropStaleInstances($abstract);
 
+        // 如果 concrete 沒帶入的話，將之設為與 abscract 相同
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
@@ -246,13 +253,18 @@ class Container implements ArrayAccess, ContainerContract
         // bound into this container to the abstract type and we will just wrap it
         // up inside its own Closure to give us more convenience when extending.
 
+        // 待了解 factory 代表什麼
         // 如果不是 Closure ，這代表只是一個被綁定此容器 abstract type 的 class 名字而已
-        // 我們會將之包進它本身的 Closure ，使我們可以更便利的去擴充
+        // 我們會將之包進它本身的 Closure ，當需要擴充時，使我們可以更便利
         if (! $concrete instanceof Closure) {
             $concrete = $this->getClosure($abstract, $concrete);
         }
 
+        // 到此 concrete 已是一個 Closure
+
         $this->bindings[$abstract] = compact('concrete', 'shared');
+
+        // bindings 中是一個 array 放著 Closure 的 concrete 及 boolean 的 shared
 
         // If the abstract type was already resolved in this container we'll fire the
         // rebound listener so that any objects which have already gotten resolved
@@ -366,6 +378,7 @@ class Container implements ArrayAccess, ContainerContract
 
     /**
      * Register a shared binding in the container.
+     * 在 container 中註冊 shared 的綁定
      *
      * @param  string  $abstract
      * @param  \Closure|string|null  $concrete
@@ -1244,17 +1257,20 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function getAlias($abstract)
     {
-        // 沒有在 aliases 之中
+        // 沒有在 aliases 之中，直接回傳
         if (! isset($this->aliases[$abstract])) {
             return $abstract;
         }
 
         // abstract 自己本身就是 alias
+        // 待了解為什麼會出現兩者相同的情況，如下：
+        // $this->aliases["Illuminate\Contracts\Http\Kernel"] = "Illuminate\Contracts\Http\Kernel";
         if ($this->aliases[$abstract] === $abstract) {
             throw new LogicException("[{$abstract}] is aliased to itself.");
         }
 
-        // 在往下一層拿 alias
+        // 遞迴再往下一層拿 alias
+        // 待了解為什麼會出現多層的 aliases 的情況
         return $this->getAlias($this->aliases[$abstract]);
     }
 
