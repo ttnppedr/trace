@@ -13,19 +13,24 @@
 - $terminatingCallbacks : [&nbsp;]
 - $serviceProviders :
 
+```php
         [
             EventServiceProvider,
             LogServiceProvider,
             RoutingServiceProvider
         ]
+```
 
 - $loadedProviders :
 
+```php
         [
             "Illuminate\Events\EventServiceProvider" => true,
             "Illuminate\Log\LogServiceProvider" => true,
             "Illuminate\Routing\RoutingServiceProvider" => true,
         ]
+```
+
 - $deferredServices : [&nbsp;]
 - $databasePath : null
 - $storagePath : null
@@ -34,6 +39,7 @@
 - $namespace : null
 - $aliases :
 
+```php
         [
             "Illuminate\Foundation\Application" => "app",
             "Illuminate\Contracts\Container\Container => "app",
@@ -100,9 +106,11 @@
             "Illuminate\View\Factory" => "view",
             "Illuminate\Contracts\View\Factory" => "view"
         ]
+```
 
-- $abstractAliases =
+- $abstractAliases :
 
+```php
         [
             "app" => [
                 "Illuminate\Foundation\Application",
@@ -239,3 +247,4 @@
                 "Illuminate\Contracts\View\Factory"
             ]
         ]
+```
