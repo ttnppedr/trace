@@ -5,12 +5,13 @@
 - clear or remove before bootstrap or instance
 
 ## Application properties modified timing
-- $instances : Container->instance()
+- $instances : Container->instance(), Container->resolve()
 - $serviceProviders : Application->markAsRegistered()
 - $loadedProviders : Application->markAsRegistered()
 - $aliases : Container->alias()
 - $abstractAliases : Container->alias()
 - $bindings : Container->bind()
+- $resolved : Container->resolve()
 
 ## Application properties after constructor
 - $basePath : "/Users/ttnppedr/code/trace"

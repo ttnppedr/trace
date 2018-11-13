@@ -207,6 +207,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function isShared($abstract)
     {
+        // 是否已被分享需判斷 instances 或 bindings 的 shared 是否為 true
         return isset($this->instances[$abstract]) ||
               (isset($this->bindings[$abstract]['shared']) &&
                $this->bindings[$abstract]['shared'] === true);
@@ -736,6 +737,7 @@ class Container implements ArrayAccess, ContainerContract
             return $this->instances[$abstract];
         }
 
+        // 把參數放進 with
         $this->with[] = $parameters;
 
         // 拿可解析的 concrete
@@ -750,7 +752,7 @@ class Container implements ArrayAccess, ContainerContract
         if ($this->isBuildable($concrete, $abstract)) {
             $object = $this->build($concrete);
         } else {
-            // make 之中就是 resolve
+            // make 之中就是 resolve，等於遞迴執行
             $object = $this->make($concrete);
         }
 
@@ -759,7 +761,8 @@ class Container implements ArrayAccess, ContainerContract
         // of services, such as changing configuration or decorating the object.
 
         // 如果有任何的 extender ，我們需要旋轉一下，並套用到正在創建的物件
-        // 這充許額外的 service ，比如改變設定或是裝飾物件
+        // 這允許額外的 service ，比如改變設定或是裝飾物件
+        // 待了解 extender 使用時機
         foreach ($this->getExtenders($abstract) as $extender) {
             $object = $extender($object, $this);
         }
@@ -770,6 +773,8 @@ class Container implements ArrayAccess, ContainerContract
 
         // 如果請求的 type 已經註冊為 singleton ，我們想要快取這個實例在記憶體中
         // 如果後續還有需要的話，這樣我們就不需要再創建一次
+
+        // 這邊如果是已被分享的且不需要額外的 contextual build ，則直接更新在 instances
         if ($this->isShared($abstract) && ! $needsContextualBuild) {
             $this->instances[$abstract] = $object;
         }
@@ -785,6 +790,7 @@ class Container implements ArrayAccess, ContainerContract
         // 這兩件事做完後，才可以回傳完整建構的實例
         $this->resolved[$abstract] = true;
 
+        // 將前面放進去的參數丟掉
         array_pop($this->with);
 
         return $object;
@@ -857,6 +863,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function findInContextualBindings($abstract)
     {
+        // 待了解 contextual 及 buildStack 在何時會被寫入
         if (isset($this->contextual[end($this->buildStack)][$abstract])) {
             return $this->contextual[end($this->buildStack)][$abstract];
         }
@@ -1285,6 +1292,7 @@ class Container implements ArrayAccess, ContainerContract
     {
         $abstract = $this->getAlias($abstract);
 
+        // 待了解 extenders 的修改時機
         if (isset($this->extenders[$abstract])) {
             return $this->extenders[$abstract];
         }
