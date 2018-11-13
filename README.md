@@ -14,6 +14,25 @@
 
 ## Application properties after constructor
 - $basePath : "/Users/ttnppedr/code/trace"
+- $instances :
+
+```php
+        [
+            "path" => "/Users/ttnppedr/code/trace/app",
+            "path.base" => "/Users/ttnppedr/code/trace",
+            "path.lang" => "/Users/ttnppedr/code/trace/resources/lang",
+            "path.config" => "/Users/ttnppedr/code/trace/config",
+            "path.public" => "/Users/ttnppedr/code/trace/public",
+            "path.storage" => "/Users/ttnppedr/code/trace/storage",
+            "path.database" => "/Users/ttnppedr/code/trace/database",
+            "path.resources" => "/Users/ttnppedr/code/trace/resources",
+            "path.bootstrap" => "/Users/ttnppedr/code/trace/bootstrap",
+            "app" => Application,
+            "Illuminate\Container\Container" => Application,
+            "Illuminate\Foundation\PackageManifest" => Application
+        ]
+```
+
 - $hasBeenBootstrapped : false
 - $booted : false
 - $bootingCallbacks : [&nbsp;]
