@@ -4,6 +4,14 @@
 - topic: Application, Container, ServiceProvider, Kernel, Bootstrappers, Dispatch, Pipeline, Middleware, Route, ParameterBag, Request, Response, Output buffers
 - clear or remove before bootstrap or instance
 
+## Application properties modified timing
+- $instances : Container->instance()
+- $serviceProviders : Application->markAsRegistered()
+- $loadedProviders : Application->markAsRegistered()
+- $aliases : Container->alias()
+- $abstractAliases : Container->alias()
+- $bindings : Container->bind()
+
 ## Application properties after constructor
 - $basePath : "/Users/ttnppedr/code/trace"
 - $hasBeenBootstrapped : false
