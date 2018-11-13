@@ -70,7 +70,7 @@
 ```php
         [
             "Illuminate\Foundation\Application" => "app",
-            "Illuminate\Contracts\Container\Container => "app",
+            "Illuminate\Contracts\Container\Container" => "app",
             "Illuminate\Contracts\Foundation\Application" => "app",
             "Psr\Container\ContainerInterface" => "app",
             "Illuminate\Auth\AuthManager" => "auth",
