@@ -910,15 +910,17 @@ class Container implements ArrayAccess, ContainerContract
         // an abstract type such as an Interface of Abstract Class and there is
         // no binding registered for the abstractions so we need to bail out.
 
-        // 如果 type 沒辦法實例化，開發者試著去解析一個像 Abstract Class 的 abstract type
+        // 如果 type 沒辦法實例化，開發者試著去解析一個像 Abstract Class 的 Interface
         // 因為沒辦法對他註冊綁定，所以就需要讓他失敗
         if (! $reflector->isInstantiable()) {
             // 連之前的 buildStack 一起丟 exception
             return $this->notInstantiable($concrete);
         }
 
+        // 把 concrete 放進 buildStack
         $this->buildStack[] = $concrete;
 
+        // 取得建構子
         $constructor = $reflector->getConstructor();
 
         // If there are no constructors, that means there are no dependencies then
@@ -927,11 +929,13 @@ class Container implements ArrayAccess, ContainerContract
 
         // 如果沒有 consturctor ，代表沒有相依，就可以立即解析，不用再考慮是否還其他相依需要解析的 type
         if (is_null($constructor)) {
+            // 把剛剛放進去 buildStack 的東西丟出來，並直接回傳實例
             array_pop($this->buildStack);
 
             return new $concrete;
         }
 
+        // 取得相依
         $dependencies = $constructor->getParameters();
 
         // Once we have all the constructor's parameters we can create each of the
@@ -939,7 +943,7 @@ class Container implements ArrayAccess, ContainerContract
         // new instance of this class, injecting the created dependencies in.
 
         // 一但我們有了 constructor 的參數，我們可以創建所有相依的實例
-        // 用這些 reflection 的實例去那些真的實例，並 inject 這些已經創建好的相依
+        // 用這些 reflection 的實例去做出那些實例，並 inject 這些已經創建好的相依
         $instances = $this->resolveDependencies(
             $dependencies
         );
@@ -999,6 +1003,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function hasParameterOverride($dependency)
     {
+        // 判斷有沒有存在 with 之中
         return array_key_exists(
             $dependency->name, $this->getLastParameterOverride()
         );
@@ -1013,7 +1018,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function getParameterOverride($dependency)
     {
-        // 放進最後一個參數之中
+        // 取出在 with 中的參數
         return $this->getLastParameterOverride()[$dependency->name];
     }
 
@@ -1040,7 +1045,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function resolvePrimitive(ReflectionParameter $parameter)
     {
-        // 如果有 contextual concrete 且是 Closure 就執行，否則回傳
+        // 如果有 contextual concrete 且是 Closure 就回傳執行結果，否則回傳
         if (! is_null($concrete = $this->getContextualConcrete('$'.$parameter->name))) {
             return $concrete instanceof Closure ? $concrete($this) : $concrete;
         }
@@ -1066,6 +1071,7 @@ class Container implements ArrayAccess, ContainerContract
     protected function resolveClass(ReflectionParameter $parameter)
     {
         try {
+            // 遞迴 resolve
             return $this->make($parameter->getClass()->name);
         }
 

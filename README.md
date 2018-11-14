@@ -12,6 +12,7 @@
 - $abstractAliases : Container->alias()
 - $bindings : Container->bind()
 - $resolved : Container->resolve()
+- $buildStack : Container->build()
 
 ## Application properties after constructor
 - $basePath : "/Users/ttnppedr/code/trace"
